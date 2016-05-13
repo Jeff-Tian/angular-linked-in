@@ -1,0 +1,25 @@
+{
+  "name": "angular-linked-in",
+  "version": "1.0.0",
+  "description": "Oauth module for linked in",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jeff-Tian/angular-linked-in.git"
+  },
+  "keywords": [
+    "oauth",
+    "angular",
+    "linked",
+    "in"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jeff-Tian/angular-linked-in/issues"
+  },
+  "homepage": "https://github.com/Jeff-Tian/angular-linked-in#readme"
+}

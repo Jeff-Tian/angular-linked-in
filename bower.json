@@ -1,0 +1,23 @@
+{
+  "name": "angular-linked-in",
+  "homepage": "https://github.com/Jeff-Tian/angular-linked-in",
+  "authors": [
+    "田杰 <jefftian@hcdlearning.com>"
+  ],
+  "description": "Oauth module for linked in",
+  "main": "",
+  "keywords": [
+    "angular",
+    "linked",
+    "in",
+    "oauth"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

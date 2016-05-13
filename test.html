@@ -1,0 +1,76 @@
+<html>
+<head>
+    <title>Test linked in login</title>
+    <script type="text/javascript" src="//platform.linkedin.com/in.js">
+        api_key:   75aumc81sapy4h
+        onLoad:    onLinkedInLoad
+        authorize: true
+        lang:      zh_CN
+    </script>
+    <script type="text/javascript">
+        function onLinkedInLoad() {
+            IN.Event.on(IN, 'auth', getProfileData);
+
+            handleLoginButton();
+        }
+
+        function handleLogoutButton() {
+            if (hasLoggedIn()) {
+                document.getElementById('logOutBtn').style.display = 'block';
+            } else {
+                document.getElementById('logOutBtn').style.display = 'none';
+            }
+        }
+
+        function handleLoginButton() {
+            if (hasLoggedIn()) {
+                document.getElementById('logInBtn').style.display = 'none';
+            } else {
+                document.getElementById('logInBtn').style.display = 'block';
+            }
+        }
+
+        function onSuccess(data) {
+            console.log(data);
+
+            handleLogoutButton();
+            handleLoginButton();
+        }
+
+        function onError(error) {
+            console.error(error);
+        }
+
+        function getProfileData() {
+            console.log(arguments);
+            IN.API.Raw('/people/~').result(onSuccess).error(onError);
+        }
+
+        function hasLoggedIn() {
+            return IN.User.isAuthorized();
+        }
+
+        function logOut() {
+            IN.User.logout(function (success) {
+                console.log(arguments);
+
+                if (success) {
+                    handleLogoutButton();
+                    handleLoginButton();
+                }
+            }, this);
+        }
+
+        function logIn() {
+            IN.User.authorize(function () {
+//                console.log(arguments);
+            }, this);
+        }
+    </script>
+</head>
+<body>
+<script type="in/Login"></script>
+<button id="logInBtn" type="button" style="display: none;" onclick="logIn()">登录</button>
+<button id="logOutBtn" type="button" style="display: none;" onclick="logOut()">退出登录</button>
+</body>
+</html>
