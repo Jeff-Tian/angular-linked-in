@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test linked in login</title>
+</head>
+<body ng-app="angularLinkedInModule" ng-controller="linkedInCtrl">
+<button id="logInBtn" type="button" ng-show="!loggedIn()" ng-click="logIn()">登录</button>
+<button id="logOutBtn" type="button" ng-show="loggedIn()" ng-click="logOut()">退出登录</button>
+
+
+<script type="text/javascript" src="/bower_components/angular/angular.min.js"></script>
+<script type="text/javascript" src="/bower_components/angularQueryParserModule/dist/scripts/app.js"></script>
+<script type="text/javascript" src="/bower_components/angularQueryParserModule/dist/scripts/queryParser.js"></script>
+<script type="text/javascript">
+    angular.module('angularLinkedInModule', ['angularQueryParserModule'])
+            .controller('linkedInCtrl', ['$scope', '$http', 'queryParser', '$q', function ($scope, $http, queryParser, $q) {
+                $scope.loggedIn = function loggedIn() {
+                    return false;
+                };
+
+                function composeMessage(expect, actual, action) {
+                    return 'checking ' + action + ' failed! expect: ' + expect + ', actual: ' + actual + '.';
+                }
+
+                function composeMessageNotNull(action) {
+                    return 'checking ' + action + ' failed! unexpected null or undefined.';
+                }
+
+                function rejectIf(deferred, expect, actual) {
+                    if (expect !== actual) {
+                        deferred.reject(composeMessage(expect, actual));
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                function checkEventOrigin(event) {
+                    var deferred = $q.defer();
+
+                    if (!rejectIf(deferred, window.location.origin, event.origin)) {
+                        deferred.resolve(event);
+                    }
+
+                    return deferred.promise;
+                }
+
+                function extractData(event) {
+                    return queryParser.parse(event.data);
+                }
+
+                function checkState(data) {
+                    var deferred = $q.defer();
+
+                    if (!rejectIf(deferred, state, data.state)) {
+                        deferred.resolve(data);
+                    }
+
+                    return deferred.promise;
+                }
+
+                function checkError(data) {
+                    var deferred = $q.defer();
+
+                    if (data.error) {
+                        console.error(data.error);
+                        deferred.reject(data.error_description);
+                    } else {
+                        deferred.resolve(data);
+                    }
+
+                    return deferred.promise;
+                }
+
+                function tryExtractCode(data) {
+                    var deferred = $q.defer();
+
+                    if (data.code) {
+                        deferred.resolve(data.code);
+                    } else {
+                        deferred.reject(composeMessageNotNull('code'));
+                    }
+
+                    return deferred.promise;
+                }
+
+                function obtainAccessToken(code) {
+                    return $http.post('https://www.linkedin.com/uas/oauth2/accessToken', {
+                        grant_type: 'authorization_code',
+                        code: code,
+                        redirect_uri: redirectUri,
+                        client_id: apiKey,
+                        client_secret: '70NEcUEVuPryLcNM'
+                    });
+                }
+
+                function listener(event) {
+                    return checkEventOrigin(event)
+                            .then(extractData)
+                            .then(checkState)
+                            .then(checkError)
+                            .then(tryExtractCode)
+                            .then(obtainAccessToken)
+                            .then(function (json) {
+                                console.log(json);
+                            })
+                            .then(null, function (reason) {
+                                console.error(reason);
+                                alert(reason);
+                            })
+                            ;
+                }
+
+                if (window.addEventListener) {
+                    addEventListener('message', listener, false);
+                } else {
+                    attachEvent('onmessage', listener);
+                }
+
+                var state = 'DCEeFWf45A53sdfKef424';
+                var redirectUri = 'http://localhost:14000/angular-linked-in/auth/linkedin/callback';
+                var apiKey = '75aumc81sapy4h';
+
+                $scope.logIn = function () {
+                    window.open('https://www.linkedin.com/uas/oauth2/authorization?response_type=code&client_id=' + apiKey + '&redirect_uri=' + encodeURIComponent(redirectUri) + '&state=' + state + '&scope=r_basicprofile');
+                };
+
+                $scope.logOut = function () {
+
+                };
+            }]);
+</script>
+</body>
+</html>
