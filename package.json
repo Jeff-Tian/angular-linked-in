@@ -24,6 +24,8 @@
   "homepage": "https://github.com/Jeff-Tian/angular-linked-in#readme",
   "dependencies": {
     "express": "^4.13.4",
+    "jade": "^1.11.0",
+    "pug": "^2.0.0-alpha7",
     "q": "^1.4.1"
   }
 }

@@ -47,7 +47,7 @@
                 }
 
                 function extractData(event) {
-                    return queryParser.parse(event.data);
+                    return event.data;
                 }
 
                 function checkState(data) {
@@ -85,25 +85,14 @@
                     return deferred.promise;
                 }
 
-                function obtainAccessToken(code) {
-                    return $http.post('https://www.linkedin.com/uas/oauth2/accessToken', {
-                        grant_type: 'authorization_code',
-                        code: code,
-                        redirect_uri: redirectUri,
-                        client_id: apiKey,
-                        client_secret: '70NEcUEVuPryLcNM'
-                    });
-                }
-
                 function listener(event) {
                     return checkEventOrigin(event)
                             .then(extractData)
-                            .then(checkState)
-                            .then(checkError)
-                            .then(tryExtractCode)
-                            .then(obtainAccessToken)
                             .then(function (json) {
                                 console.log(json);
+                                json = json.replace(/&quot;/gi, '"');
+                                console.log(json);
+                                console.log(JSON.parse(json));
                             })
                             .then(null, function (reason) {
                                 console.error(reason);

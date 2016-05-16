@@ -1,6 +1,8 @@
 var express = require('express');
 var app = express();
 
+app.set('view engine', 'pug');
+
 app.get('/', function (req, res) {
     res.send('Hello World!');
 });
@@ -16,10 +18,19 @@ app.use('/angular-linked-in/auth/linkedin/callback', function (req, res) {
 
     helper.obtainCode(req.query)
         .then(helper.obtainAccessToken)
-        .then(function (token) {
-            res.send(token);
+        .then(helper.checkAccessTokenData)
+        .then(helper.fetchProfile)
+        .then(function (json) {
+            console.log(json);
+            //res.send(json);
+            res.render(__dirname + '/callback.jade', {
+                result: JSON.parse(json),
+                resultString: json
+            });
         })
         .then(null, function (err) {
+            console.error('======= error =====');
+            console.error(err);
             res.send(err);
         });
 
